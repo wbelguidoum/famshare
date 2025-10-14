@@ -83,51 +83,57 @@ input[type="text"], input[type="file"] { font-size: 1em; padding: 0.5em; width: 
     align-items: center;
     justify-content: center;
     font-size: 0.9em;
-    pointer-events: none; /* Make it so you can't click the icon itself */
+    pointer-events: none; 
 }
 
-.photo-card img {
-    cursor: zoom-in;
-    transition: 0.3s;
-}
-.photo-card img:hover {
-    opacity: 0.8;
-}
-
-.overlay {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    padding-top: 100px;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.9);
+.gallery-toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1.5em;
+    flex-wrap: wrap;
 }
 
-.overlay-content {
-    margin: auto;
-    display: block;
-    width: 80%;
-    max-width: 800px;
-    animation-name: zoom;
-    animation-duration: 0.4s;
-}
-
-@keyframes zoom {
-    from {transform: scale(0.1)}
-    to {transform: scale(1)}
-}
-
-.close-zoom-btn {
-    position: absolute;
-    top: 15px;
-    right: 35px;
-    color: #f1f1f1;
-    font-size: 40px;
-    font-weight: bold;
-    transition: 0.3s;
+.filter-btn {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
     cursor: pointer;
+    border-radius: 20px;
+    font-size: 0.9em;
+    transition: all 0.2s ease-in-out;
+}
+
+.filter-btn:hover {
+    background-color: #e9ecef;
+}
+
+.filter-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.gallery-toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.5em;
+}
+
+#filter-dropdown {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 0.9em;
+    min-width: 150px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592c.86 0 1.315 1.013.749 1.658l-4.796 5.482a1 1 0 0 1-1.506 0z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
 }

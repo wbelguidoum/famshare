@@ -23,6 +23,10 @@
                 <p>Welcome, <b id="welcome-user"></b>! <button id="logout-btn">Logout</button></p>
             </header>
             <hr>
+            <div id="gallery-toolbar">
+                <label for="filter-dropdown" style="font-weight: bold;">Filter by Owner:</label>
+                <select id="filter-dropdown"></select>
+            </div>
             <div id="content">
             </div>
             <form id="uploadForm">
@@ -36,11 +40,6 @@
                 <button type="submit">Upload Photo</button>
             </form>
         </div>
-    </div>
-
-    <div id="zoom-overlay" class="overlay">
-        <span class="close-zoom-btn" title="Close">&times;</span>
-        <img class="overlay-content" id="zoomed-img">
     </div>
 
     <script src="/app.js"></script>

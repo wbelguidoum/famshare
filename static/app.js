@@ -6,11 +6,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadForm = document.getElementById('uploadForm');
     const contentDiv = document.getElementById('content');
     const welcomeUserSpan = document.getElementById('welcome-user');
-    const zoomOverlay = document.getElementById('zoom-overlay');
-    const zoomedImg = document.getElementById('zoomed-img');
-    const closeZoomBtn = document.querySelector('.close-zoom-btn');
+    const galleryToolbar = document.getElementById('gallery-toolbar');
+    const filterDropdown = document.getElementById('filter-dropdown'); 
 
-    let photoCache = []; 
+    Object.defineProperty(String.prototype, 'capitalize', {
+        value: function() {
+            return this.charAt(0).toUpperCase() + this.slice(1);
+        },
+        enumerable: false
+    });
+
+    let photoCache = [];
+    let currentFilter = 'all';
 
     function showLoginView() {
         loginView.style.display = 'block';
@@ -18,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showAppView(user) {
-        welcomeUserSpan.textContent = user.Username;
+        welcomeUserSpan.textContent = user.Username.capitalize();
         loginView.style.display = 'none';
         appView.style.display = 'block';
         refreshPhotos();
@@ -38,27 +45,31 @@ document.addEventListener('DOMContentLoaded', () => {
             showLoginView();
         }
     }
-
     async function refreshPhotos() {
         try {
             const response = await fetch('/api/photos');
             const photos = await response.json();
-
             photoCache = photos || [];
 
-            let html = ``;
-            if (photos && photos.length > 0) {
+            const owners = [...new Set(photoCache.map(p => p.owner))].sort();
+            let optionsHTML = `<option value="all">All Photos</option>`;
+            owners.forEach(owner => {
+                optionsHTML += `<option value="${owner}" ${currentFilter === owner ? 'selected' : ''}>${owner.capitalize()}'s Photos</option>`;
+            });
+            filterDropdown.innerHTML = optionsHTML;
+
+            const filteredPhotos = currentFilter === 'all'
+                ? photoCache
+                : photoCache.filter(p => p.owner === currentFilter);
+
+            let html = `<br/>`;
+            if (filteredPhotos.length > 0) {
                 html += `<div class="gallery">`;
-                photos.forEach(photo => {
+                filteredPhotos.forEach(photo => {
                     const photoDate = new Date(photo.date).toLocaleDateString("fr-FR");
                     const toggleVisibilityText = photo.is_public ? 'Make Private' : 'Make Public';
                     const privacyClass = photo.is_public ? 'public' : 'private';
-
-                    // This is the line we're changing
-                    const statusHTML = photo.is_public 
-                        ? `<span>🌎 Public</span>` 
-                        : `<b>🔒 Private</b>`;
-
+                    const statusHTML = photo.is_public ? `<span>🌎 Public</span>` : `<b>🔒 Private</b>`;
                     html += `
                         <div class="photo-card ${privacyClass}">
                             <div class="menu-container">
@@ -68,9 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <a href="#" class="delete-link" data-id="${photo.id}">Delete</a>
                                 </div>
                             </div>
-                            <img src="/api/photos/${photo.id}" alt="${photo.title}">
+                            <img src="/api/photos/${photo.id}" alt="${photo.title}" class="zoomable">
                             <h3>${photo.title}</h3>
-                            <p>By: ${photo.owner}</p>
+                            <p>By: ${photo.owner.capitalize()}</p>
                             <p><em>${photoDate}</em></p>
                             <p>Status: ${statusHTML}</p>
                         </div>
@@ -78,13 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 html += `</div>`;
             } else {
-                html += `<p>The gallery is empty. Upload a photo to get started!</p>`;
+                html += `<p>No photos match the current filter.</p>`;
             }
             contentDiv.innerHTML = html;
+
         } catch (error) {
-            contentDiv.innerHTML = `<p style="color:red;">Error loading photos. You may need to log in.</p>`;
+            console.log(error)
+            contentDiv.innerHTML = `<p style="color:red;">Error loading photos.</p>`;
         }
     }
+
 
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -183,6 +197,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    filterDropdown.addEventListener('change', (e) => {
+        currentFilter = e.target.value;
+        refreshPhotos();
+    });
+
+
+    galleryToolbar.addEventListener('click', (e) => {
+        if (e.target.classList.contains('filter-btn')) {
+            currentFilter = e.target.dataset.filter;
+            refreshPhotos(); 
+        }
+    });
+
 
     checkSession();
 });
