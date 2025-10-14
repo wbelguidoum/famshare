@@ -2,30 +2,31 @@ package main
 
 import (
 	"log"
-	"net/http"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
-// --- API Handlers (Unchanged) ---
-
 func main() {
-	mux := http.NewServeMux()
+	app := fiber.New()
+	app.Use(logger.New())
 
-	// Static files and uploads
-	mux.Handle("/", http.FileServer(http.Dir("./static")))
+	// Static files
+	app.Static("/", "./static")
 
-	// Public API routes
-	mux.HandleFunc("/api/login", loginHandler)
-	mux.HandleFunc("/api/logout", logoutHandler)
+	// Public routes
+	app.Post("/api/login", loginHandler)
+	app.Post("/api/logout", logoutHandler)
 
-	// Protected API routes
-	mux.Handle("/api/session/check", authMiddleware(http.HandlerFunc(checkSessionHandler)))
-	mux.Handle("/api/photos", authMiddleware(http.HandlerFunc(listPhotosListHandler)))
-	mux.Handle("/api/photos/upload", authMiddleware(http.HandlerFunc(uploadPhotoHandler)))
-	mux.Handle("/api/photos/{id:[0-9]}", authMiddleware(http.HandlerFunc(getPhotoHandler)))
-	mux.Handle("/api/photos/delete/", authMiddleware(http.HandlerFunc(deletePhotoHandler)))
+	// Protected routes
+	protected := app.Group("/api", authMiddleware)
+	protected.Get("/session/check", checkSessionHandler)
+	protected.Get("/photos", listPhotosHandler)
+	protected.Post("/photos", uploadPhotoHandler)
+	protected.Get("/photos/:id", getPhotoHandler)
+	protected.Put("/photos/:id", updatePhotoHandler)
+	protected.Delete("/photos/:id", deletePhotoHandler)
 
 	log.Println("Starting FamShare v0.1 on http://localhost:8080")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
-		log.Fatal(err)
-	}
+	log.Fatal(app.Listen(":8080"))
 }

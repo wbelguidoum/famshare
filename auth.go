@@ -1,10 +1,10 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
-	"net/http"
+	"fmt"
 	"time"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type contextKey string
@@ -14,74 +14,77 @@ const (
 	USER_CONTEXT_KEY contextKey = "user"
 )
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func loginHandler(c *fiber.Ctx) error {
 	var creds struct {
 		Username string `json:"username"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
+	if err := c.BodyParser(&creds); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid request format")
 	}
 
-	// Check if the user exists
-	_, ok := users[creds.Username]
-	if !ok {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
+	if _, ok := userStore.Get(creds.Username); !ok {
+		return fiber.ErrUnauthorized
 	}
 
-	// Set the cookie directly to the username.
-	// This is INSECURE because a user can easily change their cookie value.
-	http.SetCookie(w, &http.Cookie{
+	c.Cookie(&fiber.Cookie{
 		Name:     SESSION_COOKIE,
 		Value:    creds.Username,
 		Expires:  time.Now().Add(1 * time.Hour),
-		HttpOnly: true,
+		HTTPOnly: true,
 		Path:     "/",
 	})
-	w.WriteHeader(http.StatusOK)
+
+	return c.JSON(fiber.Map{"message": "Login successful"})
 }
 
-func logoutHandler(w http.ResponseWriter, r *http.Request) {
-	// "Logging out" now just means telling the browser to delete the cookie.
-	http.SetCookie(w, &http.Cookie{
+func logoutHandler(c *fiber.Ctx) error {
+	// Expire the cookie by setting its expiration date to the past.
+	c.Cookie(&fiber.Cookie{
 		Name:     SESSION_COOKIE,
 		Value:    "",
-		Expires:  time.Now(), // Set expiration to the past
-		HttpOnly: true,
+		Expires:  time.Now().Add(-time.Hour), // Set expiration to the past
+		HTTPOnly: true,
 		Path:     "/",
 	})
-	w.WriteHeader(http.StatusOK)
+	return c.SendStatus(fiber.StatusOK)
 }
 
-// checkSessionHandler checks if the user is logged in
-func checkSessionHandler(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value(USER_CONTEXT_KEY).(*User)
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+func checkSessionHandler(c *fiber.Ctx) error {
+	user, err := getConnectedUser(c)
+	if err != nil {
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(user)
 }
 
 // authMiddleware my insecure middleware :)
-func authMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie(SESSION_COOKIE)
-		if err != nil {
-			http.Error(w, "Unauthorized: No cookie found", http.StatusUnauthorized)
-			return
-		}
+func authMiddleware(c *fiber.Ctx) error {
+	cookie := c.Cookies(SESSION_COOKIE)
+	if cookie == "" {
+		return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized: No cookie found")
+	}
 
-		// We trust the username value directly from the cookie.
-		username := cookie.Value
-		user, ok := users[username]
-		if !ok {
-			http.Error(w, "Unauthorized: Invalid user", http.StatusUnauthorized)
-			return
-		}
+	// We trust the username value directly from the cookie.
+	username := cookie
+	if _, ok := userStore.Get(username); !ok {
+		return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized: Invalid user")
+	}
 
-		// The user is "valid" because their name is in our list.
-		// Add the username to the context for handlers to use.
-		ctx := context.WithValue(r.Context(), USER_CONTEXT_KEY, &user)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+	c.Locals(USER_CONTEXT_KEY, username)
+
+	return c.Next()
+}
+
+func getConnectedUser(c *fiber.Ctx) (*User, error) {
+	username, ok := c.Locals(USER_CONTEXT_KEY).(string)
+	if !ok {
+		return nil, fmt.Errorf("could not retrieve user information from context")
+	}
+
+	user, userExists := userStore.Get(username)
+	if !userExists {
+		return nil, fmt.Errorf("user specified in context not found")
+	}
+
+	return &user, nil
 }
