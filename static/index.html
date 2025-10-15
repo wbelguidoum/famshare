@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FamShare App</title>
     <link rel="icon" type="image/png" href="/favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
@@ -13,10 +14,11 @@
 <body>
     <div class="container">
         <div id="login-view">
+            <img src="/favicon/logo.png" alt="FamShare Logo" style="width: 150px; margin-bottom: 20px;">
             <h1>Welcome to FamShare</h1>
             <p>Please enter your name to continue.</p>
             <form id="login-form">
-                <input type="text" id="username" placeholder="Your Name" required style="width: 300px; text-align: center;">
+                <input type="text" id="username" placeholder="Your Name" required style="text-align: center;">
                 <br><br>
                 <button type="submit">Login</button>
             </form>
@@ -24,7 +26,7 @@
 
         <div id="app-view" style="display:none;">
             <header style="display: flex; justify-content: space-between; align-items: center;">
-                <div id="logo"></div>
+                <div class="logo"></div>
                 <div id="welcome-user"></div>  
             </header>
             <hr>

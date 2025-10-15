@@ -15,16 +15,16 @@ form { margin-top: 2em; padding: 1.5em; border: 1px dashed #ccc; border-radius: 
 input[type="text"], input[type="file"] { font-size: 1em; padding: 0.5em; width: 95%; margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
 #login-view { text-align: center; padding: 3em; }
 #welcome-user {border-radius: 50%; width:70px; height:70px; background-position: center; background-size: cover; }
-
+#username {width: 300px;}
 #gallery-toolbar {
     display: flex;
-    justify-content: center; /* Horizontally centers the items */
-    align-items: center;     /* Vertically aligns the label and dropdown */
-    gap: 10px;               /* Adds a nice space between the label and dropdown */
-    margin-bottom: 1.5em;    /* Space below the toolbar */
+    justify-content: center; 
+    align-items: center;     
+    gap: 10px;               
+    margin-bottom: 1.5em;    
 }
 
-#logo {
+.logo {
     background-image: url('/favicon/logo.png');
     border-radius: 15px; 
     width:100px; 
@@ -207,4 +207,46 @@ input[type="text"], input[type="file"] { font-size: 1em; padding: 0.5em; width: 
 .photo-actions:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
+}
+
+@media (max-width: 600px) {
+    body {
+        /* Reduce overall margins on small screens */
+        margin: 0.5em;
+    }
+
+    .container {
+        /* Allow the container to use the full width */
+        padding: 0 10px;
+    }
+
+    header {
+        /* Stack the header items vertically instead of side-by-side */
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .overlay-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 1.5em;
+    }
+
+    #login-view {
+        padding: 1em;
+    }
+    
+    #username {
+        width: 90%;
+    }
 }
