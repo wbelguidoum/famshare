@@ -89,11 +89,6 @@ func updatePhotoHandler(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
 	}
 
-	updatedPhoto.ID = originalPhoto.ID
-	updatedPhoto.Owner = originalPhoto.Owner
-	updatedPhoto.Filename = originalPhoto.Filename
-	updatedPhoto.Date = originalPhoto.Date
-
 	savedPhoto, ok := photoStore.Update(updatedPhoto)
 	if !ok {
 		log.Println("[updatePhotoHandler] Failed to update photo for ID:", id)
@@ -101,6 +96,28 @@ func updatePhotoHandler(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(savedPhoto)
+}
+
+func toggleLikeHandler(c *fiber.Ctx) error {
+	user, err := getConnectedUser(c)
+	if err != nil {
+		log.Println("[toggleLikeHandler] Error retrieving user:", err)
+		return fiber.NewError(fiber.StatusInternalServerError, err.Error())
+	}
+
+	id, err := c.ParamsInt("id")
+	if err != nil {
+		log.Println("[toggleLikeHandler] Error parsing photo ID:", err)
+		return fiber.NewError(fiber.StatusBadRequest, "Invalid photo ID")
+	}
+
+	photo, found := photoStore.ToggleLike(id, user.Username)
+	if !found {
+		log.Println("[toggleLikeHandler] Photo not found for ID:", id)
+		return fiber.ErrNotFound
+	}
+
+	return c.JSON(photo)
 }
 
 func uploadPhotoHandler(c *fiber.Ctx) error {

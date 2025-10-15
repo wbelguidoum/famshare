@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let photoCache = [];
     let currentFilter = 'all';
+    let currentUser = ""
 
     function showLoginView() {
         loginView.style.display = 'block';
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showAppView(user) {
         welcomeUserSpan.style.backgroundImage = `url('/profile/${user.Username}.png')`;
+        currentUser = user.Username;
         loginView.style.display = 'none';
         appView.style.display = 'block';
         refreshPhotos();
@@ -53,8 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const owners = [...new Set(photoCache.map(p => p.owner))].sort();
             let optionsHTML = `<option value="all">All Photos</option>`;
+            optionsHTML += `<option value="${currentUser}" ${currentFilter === currentUser ? 'selected' : ''}>My photos</option>`;
+
             owners.forEach(owner => {
-                optionsHTML += `<option value="${owner}" ${currentFilter === owner ? 'selected' : ''}>${owner.capitalize()}'s Photos</option>`;
+                if (owner !== currentUser) {
+                    optionsHTML += `<option value="${owner}" ${currentFilter === owner ? 'selected' : ''}>${owner.capitalize()}'s photos</option>`;
+                }
             });
             filterDropdown.innerHTML = optionsHTML;
 
@@ -70,6 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     const toggleVisibilityText = photo.is_public ? 'Make Private' : 'Make Public';
                     const privacyClass = photo.is_public ? 'public' : 'private';
                     const statusHTML = photo.is_public ? `<span>🌎 Public</span>` : `<b>🔒 Private</b>`;
+                    const likesCount = photo.liked_by ? photo.liked_by.length : 0;
+                    const isLikedByMe = photo.liked_by && photo.liked_by.includes(currentUser);                    
+                    const likes = (photo.liked_by || []).map(name => name.capitalize());
+                    let tooltipText = 'Be the first to like this!';
+                    if (likesCount > 0) {
+                        tooltipText = 'Liked by: ' + likes.join(', ');
+                    }
                     html += `
                         <div class="photo-card ${privacyClass}">
                             <div class="menu-container">
@@ -84,6 +97,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p>By: ${photo.owner.capitalize()}</p>
                             <p><em>${photoDate}</em></p>
                             <p>Status: ${statusHTML}</p>
+                            <div class="photo-actions">
+                                <button class="like-btn" data-id="${photo.id}">${isLikedByMe ? '❤️' : '🩶'}</button>
+                                <span>${likesCount} ${likesCount === 1 ? 'like' : 'likes'}</span>
+                                <span class="tooltip-text">${tooltipText}</span>
+                            </div>
                         </div>
                     `;
                 });
@@ -189,6 +207,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Delete failed! You may not have the right to delete this photo.');
                 }
             }
+        }
+
+        const likeButton = e.target.closest('.like-btn');
+        if (likeButton) {
+            const photoId = likeButton.getAttribute('data-id');
+            const response = await fetch(`/api/photos/${photoId}/like`, {
+                method: 'POST',
+            });
+            if (response.ok) {
+                refreshPhotos(); 
+            }
+            return; 
         }
     });
 

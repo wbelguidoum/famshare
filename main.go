@@ -25,6 +25,7 @@ func main() {
 	protected.Post("/photos", uploadPhotoHandler)
 	protected.Get("/photos/:id", getPhotoHandler)
 	protected.Put("/photos/:id", updatePhotoHandler)
+	protected.Post("/photos/:id/like", toggleLikeHandler)
 	protected.Delete("/photos/:id", deletePhotoHandler)
 
 	log.Println("Starting FamShare v0.1 on http://0.0.0.0:8080")

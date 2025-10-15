@@ -153,3 +153,58 @@ input[type="text"], input[type="file"] { font-size: 1em; padding: 0.5em; width: 
     background-repeat: no-repeat;
     background-position: right 10px center;
 }
+
+.photo-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    color: #6c757d;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    padding: 0;
+    line-height: 1;
+}
+
+
+.photo-actions {
+    position: relative; 
+}
+
+.tooltip-text {
+    visibility: hidden; /* Hidden by default */
+    width: max-content;
+    max-width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%; /* Position the tooltip above the like button */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+.photo-actions:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
