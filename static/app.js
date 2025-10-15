@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 html += `<p>No photos match the current filter.</p>`;
             }
             contentDiv.innerHTML = html;
-
+            mediumZoom('.zoomable');
         } catch (error) {
             console.log(error)
             contentDiv.innerHTML = `<p style="color:red;">Error loading photos.</p>`;
