@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginView = document.getElementById('login-view');
     const appView = document.getElementById('app-view');
     const loginForm = document.getElementById('login-form');
-    const logoutBtn = document.getElementById('logout-btn');
+    const logoutBtn = document.getElementById('welcome-user');
     const uploadForm = document.getElementById('uploadForm');
     const contentDiv = document.getElementById('content');
     const welcomeUserSpan = document.getElementById('welcome-user');
@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showAppView(user) {
-        welcomeUserSpan.textContent = user.Username.capitalize();
+        welcomeUserSpan.style.backgroundImage = `url('/profile/${user.Username}.png')`;
         loginView.style.display = 'none';
         appView.style.display = 'block';
         refreshPhotos();
     }
 
-    async function checkSession() {
+    async function checkSession() { 
         try {
             const response = await fetch('/api/session/check');
             if (response.ok) {
@@ -117,8 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     logoutBtn.addEventListener('click', async () => {
-        await fetch('/api/logout', { method: 'POST' });
-        showLoginView();
+        if (confirm('Are you sure you want to logout?')) {
+            await fetch('/api/logout', { method: 'POST' });
+            showLoginView();
+        }
     });
 
     uploadForm.addEventListener('submit', async (e) => {

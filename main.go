@@ -27,6 +27,6 @@ func main() {
 	protected.Put("/photos/:id", updatePhotoHandler)
 	protected.Delete("/photos/:id", deletePhotoHandler)
 
-	log.Println("Starting FamShare v0.1 on http://localhost:8080")
-	log.Fatal(app.Listen(":8080"))
+	log.Println("Starting FamShare v0.1 on http://0.0.0.0:8080")
+	log.Fatal(app.Listen("0.0.0.0:8080"))
 }

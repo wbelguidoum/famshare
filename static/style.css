@@ -15,6 +15,24 @@ button:hover { background-color: #0056b3; }
 form { margin-top: 2em; padding: 1.5em; border: 1px dashed #ccc; border-radius: 8px; background-color: #fff; }
 input[type="text"], input[type="file"] { font-size: 1em; padding: 0.5em; width: 95%; margin-bottom: 1em; border: 1px solid #ccc; border-radius: 4px; }
 #login-view { text-align: center; padding: 3em; }
+#welcome-user {border-radius: 50%; width:70px; height:70px; background-position: center; background-size: cover; }
+
+#gallery-toolbar {
+    display: flex;
+    justify-content: center; /* Horizontally centers the items */
+    align-items: center;     /* Vertically aligns the label and dropdown */
+    gap: 10px;               /* Adds a nice space between the label and dropdown */
+    margin-bottom: 1.5em;    /* Space below the toolbar */
+}
+
+#logo {
+    background-image: url('/favicon/logo.png');
+    border-radius: 15px; 
+    width:100px; 
+    height:100px; 
+    background-position: center; 
+    background-size: cover; 
+}
 
 .menu-container {
     position: absolute;
