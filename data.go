@@ -31,24 +31,24 @@ type PhotoStore interface {
 
 // In-Memory Database
 var users = map[string]User{
-	"wissem": {Username: "wissem", Role: "admin"},
-	"adam":   {Username: "adam", Role: "user"},
-	"cal":    {Username: "cal", Role: "user"},
-	"emy":    {Username: "emy", Role: "user"},
-	"rita":   {Username: "rita", Role: "user"},
+	"developer": {Username: "developer", Role: "admin"},
+	"adam":      {Username: "adam", Role: "user"},
+	"cal":       {Username: "cal", Role: "user"},
+	"emy":       {Username: "emy", Role: "user"},
+	"rita":      {Username: "rita", Role: "user"},
 }
 
 var photos = map[int]Photo{
-	1:  {ID: 1, Title: "Adam at the beach", Owner: "adam", IsPublic: true, Filename: "adam_beach.png", Date: time.Date(2023, 8, 15, 0, 0, 0, 0, time.UTC), LikedBy: []string{"rita", "wissem"}},
+	1:  {ID: 1, Title: "Adam at the beach", Owner: "adam", IsPublic: true, Filename: "adam_beach.png", Date: time.Date(2023, 8, 15, 0, 0, 0, 0, time.UTC), LikedBy: []string{"rita", "developer"}},
 	2:  {ID: 2, Title: "Cal and Adam playing tennis", Owner: "cal", IsPublic: true, Filename: "cal_adam_tenis.png", Date: time.Date(2024, 5, 20, 0, 0, 0, 0, time.UTC), LikedBy: []string{"adam", "emy"}},
-	3:  {ID: 3, Title: "A day at the farm", Owner: "cal", IsPublic: true, Filename: "cal_farm.png", Date: time.Date(2023, 10, 2, 0, 0, 0, 0, time.UTC), LikedBy: []string{"wissem", "emy", "adam"}},
+	3:  {ID: 3, Title: "A day at the farm", Owner: "cal", IsPublic: true, Filename: "cal_farm.png", Date: time.Date(2023, 10, 2, 0, 0, 0, 0, time.UTC), LikedBy: []string{"developer", "emy", "adam"}},
 	4:  {ID: 4, Title: "Emy with her newborn", Owner: "emy", IsPublic: false, Filename: "emy_baby.png", Date: time.Date(2024, 7, 23, 0, 0, 0, 0, time.UTC), LikedBy: []string{"emy"}},
 	5:  {ID: 5, Title: "Emy and Rita's Chess Game", Owner: "emy", IsPublic: true, Filename: "emy_rita_enjoying_chess.png", Date: time.Date(2024, 2, 18, 0, 0, 0, 0, time.UTC), LikedBy: []string{"rita"}},
-	6:  {ID: 6, Title: "Coffee with Emy", Owner: "wissem", IsPublic: true, Filename: "emy_wissem_coffee.png", Date: time.Date(2025, 1, 5, 0, 0, 0, 0, time.UTC), LikedBy: []string{"wissem", "emy"}},
-	7:  {ID: 7, Title: "The Big Family Reunion", Owner: "wissem", IsPublic: true, Filename: "family_reunion.png", Date: time.Date(2024, 7, 22, 0, 0, 0, 0, time.UTC), LikedBy: []string{"adam", "cal", "emy", "rita", "wissem"}},
-	8:  {ID: 8, Title: "Rita's Graduation", Owner: "rita", IsPublic: true, Filename: "rita_diploma.png", Date: time.Date(2025, 6, 14, 0, 0, 0, 0, time.UTC), LikedBy: []string{"emy", "adam", "wissem"}},
-	9:  {ID: 9, Title: "Wissem's New Setup", Owner: "wissem", IsPublic: false, Filename: "wissem_new_setup.png", Date: time.Date(2024, 9, 1, 0, 0, 0, 0, time.UTC), LikedBy: []string{}},
-	10: {ID: 10, Title: "Wissem's Profile photo", Owner: "wissem", IsPublic: false, Filename: "wissem.png", Date: time.Date(2021, 9, 1, 0, 0, 0, 0, time.UTC)},
+	6:  {ID: 6, Title: "Coffee with Emy", Owner: "developer", IsPublic: true, Filename: "emy_developer_coffee.png", Date: time.Date(2025, 1, 5, 0, 0, 0, 0, time.UTC), LikedBy: []string{"developer", "emy"}},
+	7:  {ID: 7, Title: "The Big Family Reunion", Owner: "developer", IsPublic: true, Filename: "family_reunion.png", Date: time.Date(2024, 7, 22, 0, 0, 0, 0, time.UTC), LikedBy: []string{"adam", "cal", "emy", "rita", "developer"}},
+	8:  {ID: 8, Title: "Rita's Graduation", Owner: "rita", IsPublic: true, Filename: "rita_diploma.png", Date: time.Date(2025, 6, 14, 0, 0, 0, 0, time.UTC), LikedBy: []string{"emy", "adam", "developer"}},
+	9:  {ID: 9, Title: "Developer's New Setup", Owner: "developer", IsPublic: false, Filename: "developer_new_setup.png", Date: time.Date(2024, 9, 1, 0, 0, 0, 0, time.UTC), LikedBy: []string{}},
+	10: {ID: 10, Title: "Developer's Profile photo", Owner: "developer", IsPublic: false, Filename: "developer.png", Date: time.Date(2021, 9, 1, 0, 0, 0, 0, time.UTC)},
 	11: {ID: 11, Title: "Emy's Profile photo", Owner: "emy", IsPublic: false, Filename: "emy.png", Date: time.Date(2021, 10, 1, 0, 0, 0, 0, time.UTC)},
 	12: {ID: 12, Title: "Cal's Profile photo", Owner: "cal", IsPublic: false, Filename: "cal.png", Date: time.Date(2021, 11, 1, 0, 0, 0, 0, time.UTC)},
 	13: {ID: 13, Title: "Adam's Profile photo", Owner: "adam", IsPublic: false, Filename: "adam.png", Date: time.Date(2021, 11, 2, 0, 0, 0, 0, time.UTC)},
